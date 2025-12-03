@@ -1,0 +1,33 @@
+name: Mini CI Pipeline
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: |
+        pytest --maxfail=1 --disable-warnings -q | tee test_report.txt
+
+    - name: Upload test report
+      uses: actions/upload-artifact@v3
+      with:
+        name: hasil-test
+        path: test_report.txt
